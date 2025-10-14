@@ -1,39 +1,62 @@
 <?php
-require_once("adm/script/conex.php");
-
-// Crear conexión
-$cn = new MySQLcn();
+// Agregando seguimiento de visitas y obteniendo banners con mysqli
 
 // --- Función para detectar el sistema operativo ---
-function detectarSO($ua) {
-    $ua = strtolower($ua);
-    if (strpos($ua, 'windows') !== false) return 'Windows';
-    if (strpos($ua, 'linux') !== false) return 'Linux';
-    if (strpos($ua, 'mac') !== false) return 'MacOS';
-    if (strpos($ua, 'android') !== false) return 'Android';
-    if (strpos($ua, 'iphone') !== false) return 'iOS';
+function detectarSO($sua) {
+    $sua = strtolower($sua);
+    if (strpos($sua, 'windows') !== false) return 'Windows';
+    if (strpos($sua, 'linux') !== false) return 'Linux';
+    if (strpos($sua, 'mac') !== false) return 'MacOS';
+    if (strpos($sua, 'android') !== false) return 'Android';
+    if (strpos($sua, 'iphone') !== false) return 'iOS';
     return 'Otro';
 }
 
-// --- REGISTRAR VISITA ---
+// --- Datos de la visita ---
 $ip = $_SERVER['REMOTE_ADDR'];
 $navegador = $_SERVER['HTTP_USER_AGENT'];
 $so = detectarSO($navegador);
 $fecha = date("Y-m-d");
 $hora = date("H:i:s");
 
-// Insertar la visita
-$sql_insertar = "INSERT INTO visitas (ip, so, navegador, fecha, hora) 
-                 VALUES ('$ip', '$so', '$navegador', '$fecha', '$hora')";
-$cn->Query($sql_insertar);
+// --- Conexión a la base de datos ---
+$servidor = "localhost";
+$usuario = "root";
+$password = "";
+$base_de_datos = "myweb";
 
-// --- OBTENER BANNERS ACTIVOS ---
-$sql_banners = "SELECT Titulo, Describir, Enlace, Imagen FROM banner WHERE estado = 1 ORDER BY fecha DESC";
-$cn->Query($sql_banners);
-$banners = $cn->Rows();
+$cn = new mysqli($servidor, $usuario, $password, $base_de_datos);
 
-// Cerrar conexión
-$cn->Close();
+// Inicializar banners como un array vacío para evitar errores si la conexión falla
+$banners = [];
+
+// Verificar conexión y proceder si tiene éxito
+if (!$cn->connect_error) {
+    // --- REGISTRAR VISITA (Usando Consultas Preparadas para seguridad) ---
+    $sql_visita = "INSERT INTO visitas (ip, so, navegador, fecha, hora) VALUES (?, ?, ?, ?, ?)";
+    if ($stmt = $cn->prepare($sql_visita)) {
+        // Vincular parámetros: s = string
+        $stmt->bind_param("sssss", $ip, $so, $navegador, $fecha, $hora);
+        // Ejecutar la consulta
+        $stmt->execute();
+        // Cerrar la sentencia
+        $stmt->close();
+    }
+
+    // --- OBTENER BANNERS ACTIVOS ---
+    $sql_banners = "SELECT Titulo, Describir, Enlace, Imagen FROM banner WHERE estado = 1 ORDER BY fecha DESC";
+    $result_banners = $cn->query($sql_banners);
+    
+    if ($result_banners && $result_banners->num_rows > 0) {
+        // Almacenar los resultados en el array de banners
+        while($row = $result_banners->fetch_assoc()) {
+            $banners[] = $row;
+        }
+    }
+
+    // Cerrar Conexión
+    $cn->close();
+}
 ?>
 
 <!DOCTYPE html>
@@ -60,6 +83,13 @@ $cn->Close();
             border-radius: 10px;
             max-width: 80%;
             margin: 0 auto;
+        }
+        .news-section {
+            padding: 60px 0;
+        }
+        .card-img-top {
+            height: 200px;
+            object-fit: cover;
         }
     </style>
 </head>
@@ -126,6 +156,55 @@ $cn->Close();
             <span class="carousel-control-next-icon"></span>
         </button>
     </div>
+
+    <!-- News Section -->
+    <section class="news-section">
+        <div class="container">
+            <h2 class="text-center mb-5">Últimas Noticias</h2>
+            <div class="row">
+                <!-- News Item 1 -->
+                <div class="col-md-3 mb-4">
+                    <div class="card h-100">
+                        <img src="https://images.unsplash.com/photo-1504711434969-e33886168f5c?q=80&w=2070&auto=format&fit=crop" class="card-img-top" alt="Noticia 1">
+                        <div class="card-body">
+                            <h5 class="card-title">Avances en IA</h5>
+                            <p class="card-text">Descubre cómo la inteligencia artificial está revolucionando la industria del software.</p>
+                        </div>
+                    </div>
+                </div>
+                <!-- News Item 2 -->
+                <div class="col-md-3 mb-4">
+                    <div class="card h-100">
+                        <img src="https://images.unsplash.com/photo-1555066931-4365d14bab8c?q=80&w=2070&auto=format&fit=crop" class="card-img-top" alt="Noticia 2">
+                        <div class="card-body">
+                            <h5 class="card-title">Desarrollo Web Moderno</h5>
+                            <p class="card-text">Las últimas tendencias y frameworks para crear aplicaciones web de alto impacto.</p>
+                        </div>
+                    </div>
+                </div>
+                <!-- News Item 3 -->
+                <div class="col-md-3 mb-4">
+                    <div class="card h-100">
+                        <img src="https://images.unsplash.com/photo-1517694712202-14dd9538aa97?q=80&w=2070&auto=format&fit=crop" class="card-img-top" alt="Noticia 3">
+                        <div class="card-body">
+                            <h5 class="card-title">Seguridad Informática</h5>
+                            <p class="card-text">Protege tus proyectos con las mejores prácticas de ciberseguridad del 2024.</p>
+                        </div>
+                    </div>
+                </div>
+                <!-- News Item 4 -->
+                <div class="col-md-3 mb-4">
+                    <div class="card h-100">
+                        <img src="https://images.unsplash.com/photo-1542626991-a2f575a7e6a6?q=80&w=2070&auto=format&fit=crop" class="card-img-top" alt="Noticia 4">
+                        <div class="card-body">
+                            <h5 class="card-title">Gestión de Proyectos</h5>
+                            <p class="card-text">Metodologías ágiles para entregar software de calidad a tiempo y dentro del presupuesto.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
 
     <!-- Footer -->
     <footer class="bg-dark text-white py-4 text-center">

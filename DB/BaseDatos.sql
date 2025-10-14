@@ -101,3 +101,12 @@ BEGIN
 END
 ;;
 DELIMITER ;
+
+CREATE TABLE visitas (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    ip VARCHAR(45),
+    so VARCHAR(50),
+    navegador VARCHAR(255),
+    fecha DATE,
+    hora TIME
+);

@@ -37,11 +37,11 @@ if(isset($_GET['mensaje'])){
         }
         html, body { height: 100%; }
         body { font-family: var(--font-body); background: var(--light-gray); color: var(--text-dark); display: flex; flex-direction: column; }
-        .container-fluid { max-width: 1200px; margin: 0 auto; padding: 0 20px; }
+        .container { max-width: 1200px; margin: 0 auto; padding: 0 20px; }
 
         /* Navegación */
         .navbar-custom { background: var(--primary-blue); padding: 1rem 0; box-shadow: 0 2px 10px rgba(0,0,0,0.1); width: 100%; }
-        .navbar-custom .container-fluid { display: flex; justify-content: space-between; align-items: center; }
+        .navbar-custom .container { display: flex; justify-content: space-between; align-items: center; }
         .logo { font-family: var(--font-script); font-size: 2.2rem; color: white; text-decoration: none; text-transform: capitalize; }
         .nav-menu { display: flex; list-style: none; gap: 2.5rem; margin-bottom: 0; }
         .nav-menu a { color: rgba(255,255,255,0.9); text-decoration: none; font-size: 0.95rem; font-weight: 500; }
@@ -71,7 +71,7 @@ if(isset($_GET['mensaje'])){
 </head>
 <body>
     <nav class="navbar-custom">
-        <div class="container-fluid">
+        <div class="container">
             <a href="../index.php" class="logo">QA Software</a>
             <ul class="nav-menu">
                 <li><a href="../index.php">Inicio</a></li>
@@ -110,7 +110,7 @@ if(isset($_GET['mensaje'])){
     </main>
 
     <footer class="footer">
-        <div class="container-fluid">
+        <div class="container">
             <p>&copy; <?php echo date("Y"); ?> Calidad de Software. Todos los derechos reservados.</p>
         </div>
     </footer>

@@ -26,6 +26,32 @@ if (!$cn->connect_error) {
 if (!empty($noticias)) {
     $noticia_destacada = array_shift($noticias);
 }
+
+// --- SI NO HAY NOTICIAS EN LA BD, MOSTRAR DATOS DE EJEMPLO ---
+if (empty($noticia_destacada) && empty($noticias)) {
+    $noticia_destacada = [
+        'titulo' => 'El Futuro de las Pruebas de Software',
+        'nota' => 'La inteligencia artificial está revolucionando la forma en que probamos el software, automatizando tareas complejas y prediciendo defectos antes de que ocurran.',
+        'imagen' => 'https://images.unsplash.com/photo-1555066931-4365d1469c98?q=80&w=2070&auto=format&fit=crop'
+    ];
+    $noticias = [
+        [
+            'titulo' => 'Principales Herramientas de QA en 2024',
+            'nota' => 'Un recorrido por las herramientas más populares y efectivas para la automatización de pruebas, gestión de casos de prueba y seguimiento de errores.',
+            'imagen' => 'https://images.unsplash.com/photo-1516116216624-53e697fedbea?q=80&w=1935&auto=format&fit=crop'
+        ],
+        [
+            'titulo' => 'La Importancia de las Pruebas de Seguridad',
+            'nota' => 'En un mundo digital, proteger los datos de los usuarios es primordial. Descubre por qué las pruebas de seguridad no son una opción, sino una necesidad.',
+            'imagen' => 'https://images.unsplash.com/photo-1562813733-b31f71025d54?q=80&w=2069&auto=format&fit=crop'
+        ],
+        [
+            'titulo' => 'Metodologías Ágiles y QA',
+            'nota' => 'Cómo integrar eficazmente los procesos de aseguramiento de la calidad en equipos que trabajan con Scrum, Kanban y otras metodologías ágiles.',
+            'imagen' => 'https://images.unsplash.com/photo-1542744173-8e7e53415bb0?q=80&w=2070&auto=format&fit=crop'
+        ]
+    ];
+}
 ?>
 <!DOCTYPE html>
 <html lang="es">
